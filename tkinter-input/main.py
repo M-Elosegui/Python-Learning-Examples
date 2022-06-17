@@ -24,7 +24,7 @@ from tkinter import *
 from PIL import Image, ImageTk
 from tkinter import messagebox
 import CodeGen
-
+import json
 
 # FUNCTIONS:
 
@@ -39,20 +39,57 @@ def save():
     website = website_entry.get()
     email = email_entry.get()
     password = password_entry.get()
+    new_data = {
+            website:{
+                "email": email,
+                "password": password
+                }
+    }
 
     if len(website) == 0 or len(password) == 0:
         messagebox.showinfo(title="Ooops! Blank field", message="Please make sure you haven't left any fields empty.")
 
     else:
 
-        is_ok = messagebox.askokcancel(title="website",message=f"These are the details you entered: \n \n email: {email} \n password: {password} \n website: {website}")
-
+        is_ok = messagebox.askokcancel(title="website",message=f"SUCCESS! \n These are the details you entered: \n \n Website:  {website} \n Email:  {email} \n Password:  {password} ")
         if is_ok:
-            with open("data.txt","a") as data_file:
-                data_file.write(f" {website} | {email} | {password} \n")
-                website_entry.delete(0,END)
-                password_entry.delete(0,END)
 
+            try:
+                with open("data1.json", "r") as data_file_jason:
+                    data = json.load(data_file_jason)
+                # data.update(new_data)
+
+            except FileNotFoundError:
+                with open("data1.json", "w") as data_file_jason:
+                    json.dump(new_data, data_file_jason, indent=4)
+
+            else:
+                data.update(new_data)
+
+                with open("data1.json", "w") as data_file_jason:
+                    json.dump(data, data_file_jason, indent=4)
+
+            finally:
+                website_entry.delete(0, END)
+                password_entry.delete(0, END)
+
+
+            ### To open an existing one
+            # with open("data1.json", "w") as data_file_jason:
+            #     json.dump(new_data, data_file_jason, indent=4)
+            #     data = jsonload(data_file_jason)
+            #     json.update(new_data)
+            #     json.dump(data, data_file_jason, indent=4)
+
+
+
+        ###             BLOCK WITH .txt format
+        # if is_ok:
+        #     with open("data.txt","a") as data_file:
+        #         data_file.write(f" {website} | {email} | {password} \n")
+        #         website_entry.delete(0,END)
+        #         password_entry.delete(0,END)
+        #
 
 
 
@@ -60,16 +97,16 @@ def save():
 
 window = Tk()
 window.title("Example of input/output")
-window.config(padx = 20, pady = 20)
-canvas = Canvas(height=400, width = 400)
+window.config(padx=20, pady=20)
+canvas = Canvas(height=400, width=400)
 
 #Image resized with PIL commands
 img=Image.open("in-out.jpg")
-img_resized=img.resize((300,300),Image.ANTIALIAS)
+img_resized=img.resize((300, 300), Image.ANTIALIAS)
 new_img=ImageTk.PhotoImage(img_resized)
 
 # logo = PhotoImage(file="in-out.jpg")
-canvas.create_image(200,200, image = new_img)
+canvas.create_image(200, 200, image=new_img)
 canvas.grid(row=0, column=1)
 
 #Labels (text)
